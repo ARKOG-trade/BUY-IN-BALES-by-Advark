@@ -1,0 +1,1 @@
+ALTER TABLE `partner_inquiries` ADD `directoryVisibility` enum('private','listed') DEFAULT 'private' NOT NULL;
