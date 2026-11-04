@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7f2">
+  <title>Settings | Buy-in-Bales</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202820;
+      --muted: #687368;
+      --line: #e2e8de;
+      --paper: #fff;
+      --canvas: #f6f7f2;
+      --green: #2f6b42;
+      --green-dark: #245335;
+      --soft-green: #edf5ed;
+      --danger: #a33b32;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); }
+    button, input, select { font: inherit; }
+    .topbar { background: var(--paper); border-bottom: 1px solid var(--line); }
+    .topbar-inner { width: min(1120px, calc(100% - 40px)); min-height: 72px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; font-weight: 750; letter-spacing: -.03em; }
+    .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; color: white; background: var(--green); font-size: 19px; }
+    .top-actions { display: flex; align-items: center; gap: 14px; color: var(--muted); font-size: 14px; }
+    .avatar { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #e6eee4; color: var(--green-dark); font-weight: 700; }
+    main { width: min(1120px, calc(100% - 40px)); margin: 42px auto 72px; }
+    .intro { margin-bottom: 26px; }
+    .eyebrow { margin: 0 0 7px; color: var(--green); font-size: 12px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(30px, 4vw, 40px); letter-spacing: -.045em; }
+    .intro p:last-child { margin: 9px 0 0; color: var(--muted); }
+    .layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); align-items: start; gap: 24px; }
+    .nav-card, .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; }
+    .nav-card { padding: 10px; position: sticky; top: 20px; }
+    .nav-card a { display: block; padding: 11px 12px; margin: 2px 0; border-radius: 9px; color: #485248; text-decoration: none; font-size: 14px; font-weight: 600; }
+    .nav-card a:hover, .nav-card a[aria-current="location"] { color: var(--green-dark); background: var(--soft-green); }
+    .content { display: grid; gap: 18px; }
+    .panel { padding: 24px; scroll-margin-top: 20px; }
+    .panel-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 19px; border-bottom: 1px solid var(--line); }
+    h2 { margin: 0; font-size: 18px; letter-spacing: -.02em; }
+    .panel-heading p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 16px; padding-top: 20px; }
+    .field { display: grid; gap: 7px; }
+    .field.full { grid-column: 1 / -1; }
+    label, .field-label { font-size: 13px; font-weight: 650; }
+    input, select { width: 100%; min-height: 43px; padding: 10px 12px; border: 1px solid #d6ded4; border-radius: 8px; background: white; color: var(--ink); }
+    input:focus, select:focus, button:focus-visible, a:focus-visible { outline: 3px solid #a8c9a9; outline-offset: 2px; }
+    .help { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .toggle-row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .toggle-copy strong { display: block; font-size: 14px; }
+    .toggle-copy span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; line-height: 1.4; }
+    .switch { appearance: none; flex: 0 0 auto; width: 44px; height: 25px; padding: 3px; border: 0; border-radius: 99px; background: #cbd3c9; cursor: pointer; transition: background .15s ease; }
+    .switch::before { content: ""; display: block; width: 19px; height: 19px; border-radius: 50%; background: white; box-shadow: 0 1px 3px #0002; transition: transform .15s ease; }
+    .switch:checked { background: var(--green); }
+    .switch:checked::before { transform: translateX(19px); }
+    .actions { position: sticky; bottom: 12px; display: flex; justify-content: flex-end; align-items: center; gap: 12px; padding: 13px 16px; border: 1px solid var(--line); border-radius: 13px; background: #ffffffed; box-shadow: 0 8px 26px #1b2b1b12; backdrop-filter: blur(8px); }
+    .button { min-height: 40px; padding: 9px 15px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; font-weight: 650; }
+    .button.secondary { border-color: var(--line); background: white; color: var(--ink); }
+    .button.primary { background: var(--green); color: white; }
+    .button.primary:hover { background: var(--green-dark); }
+    #status { margin-right: auto; color: var(--green-dark); font-size: 13px; }
+    footer { padding: 20px; color: var(--muted); text-align: center; font-size: 12px; }
+    @media (max-width: 720px) {
+      .topbar-inner, main { width: min(100% - 28px, 600px); }
+      main { margin-top: 30px; }
+      .layout { grid-template-columns: 1fr; gap: 14px; }
+      .nav-card { position: static; display: flex; overflow-x: auto; gap: 4px; }
+      .nav-card a { flex: 0 0 auto; }
+      .panel { padding: 19px; }
+    }
+    @media (max-width: 480px) {
+      .top-actions .account-name { display: none; }
+      .fields { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .actions { bottom: 8px; }
+      #status { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#top" aria-label="Buy-in-Bales home">
+        <span class="brand-mark" aria-hidden="true">B</span>
+        <span>BUY-IN-BALES</span>
+      </a>
+      <div class="top-actions"><span class="account-name">Account settings</span><span class="avatar" aria-hidden="true">A</span></div>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="intro">
+      <p class="eyebrow">Your account</p>
+      <h1>Settings</h1>
+      <p>Manage your profile, preferences, and account notifications.</p>
+    </div>
+
+    <div class="layout">
+      <nav class="nav-card" aria-label="Settings sections">
+        <a href="#profile" aria-current="location">Profile</a>
+        <a href="#preferences">Preferences</a>
+        <a href="#notifications">Notifications</a>
+        <a href="#security">Security</a>
+      </nav>
+
+      <form id="settings-form" class="content">
+        <section class="panel" id="profile" aria-labelledby="profile-title">
+          <div class="panel-heading"><div><h2 id="profile-title">Profile information</h2><p>Update the details associated with your account.</p></div></div>
+          <div class="fields">
+            <div class="field"><label for="first-name">First name</label><input id="first-name" name="firstName" autocomplete="given-name" placeholder="Your first name"></div>
+            <div class="field"><label for="last-name">Last name</label><input id="last-name" name="lastName" autocomplete="family-name" placeholder="Your last name"></div>
+            <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com"></div>
+            <div class="field"><label for="phone">Phone number</label><input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="Optional"></div>
+            <div class="field full"><label for="business">Business name <span style="font-weight:400;color:#687368">(optional)</span></label><input id="business" name="business" autocomplete="organization" placeholder="Your business"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="preferences" aria-labelledby="preferences-title">
+          <div class="panel-heading"><div><h2 id="preferences-title">Preferences</h2><p>Choose how information is displayed for you.</p></div></div>
+          <div class="fields">
+            <div class="field"><label for="language">Language</label><select id="language" name="language"><option value="en">English</option><option value="es">Español</option><option value="fr">Français</option></select></div>
+            <div class="field"><label for="timezone">Time zone</label><select id="timezone" name="timezone"><option value="UTC">UTC</option><option value="America/Los_Angeles">Pacific Time</option><option value="America/Denver">Mountain Time</option><option value="America/Chicago">Central Time</option><option value="America/New_York">Eastern Time</option></select></div>
+          </div>
+        </section>
+
+        <section class="panel" id="notifications" aria-labelledby="notifications-title">
+          <div class="panel-heading"><div><h2 id="notifications-title">Notifications</h2><p>Choose which updates you would like to receive.</p></div></div>
+          <div>
+            <div class="toggle-row"><div class="toggle-copy"><strong>Order and account updates</strong><span>Important updates about your orders and account.</span></div><input class="switch" type="checkbox" name="orderUpdates" role="switch" aria-label="Order and account updates" checked></div>
+            <div class="toggle-row"><div class="toggle-copy"><strong>Product news</strong><span>News and announcements from Buy-in-Bales.</span></div><input class="switch" type="checkbox" name="productNews" role="switch" aria-label="Product news"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="security" aria-labelledby="security-title">
+          <div class="panel-heading"><div><h2 id="security-title">Security</h2><p>Keep your account information up to date.</p></div></div>
+          <div class="fields">
+            <div class="field full"><span class="field-label">Password</span><p class="help">For your security, password changes should be handled through the account sign-in or password reset flow.</p></div>
+          </div>
+        </section>
+
+        <div class="actions">
+          <span id="status" role="status" aria-live="polite"></span>
+          <button class="button secondary" type="reset">Discard changes</button>
+          <button class="button primary" type="submit">Save settings</button>
+        </div>
+      </form>
+    </div>
+  </main>
+  <footer>BUY-IN-BALES · Account settings</footer>
+
+  <script>
+    // Demo persistence in this browser only. Connect this form to your backend for account-wide saves.
+    const form = document.querySelector('#settings-form');
+    const status = document.querySelector('#status');
+    const storageKey = 'buy-in-bales-settings';
+
+    function loadSettings() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+        for (const [name, value] of Object.entries(saved)) {
+          const field = form.elements.namedItem(name);
+          if (!field) continue;
+          if (field.type === 'checkbox') field.checked = Boolean(value);
+          else field.value = value;
+        }
+      } catch {
+        localStorage.removeItem(storageKey);
+      }
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const values = {};
+      for (const field of form.elements) {
+        if (!field.name) continue;
+        values[field.name] = field.type === 'checkbox' ? field.checked : field.value;
+      }
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(values));
+        status.textContent = 'Settings saved on this device.';
+      } catch {
+        status.textContent = 'Could not save settings in this browser.';
+      }
+    });
+
+    form.addEventListener('reset', () => {
+      window.setTimeout(() => {
+        localStorage.removeItem(storageKey);
+        status.textContent = 'Saved settings cleared from this device.';
+      }, 0);
+    });
+
+    loadSettings();
+  </script>
+</body>
+</html>
