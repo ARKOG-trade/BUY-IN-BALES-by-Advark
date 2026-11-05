@@ -1,52 +1,56 @@
-# BUY IN BALES — implementation plan
+# BUY IN BALES — marketplace redesign plan
 
-## Product scope
+> **Status: Owner-approved implementation direction.** The buyer-facing fixed-return path uses a 50% return on the bale investment plus principal: ₦100,000 invested means ₦150,000 total payout. The new flow excludes the former 60/40 option while retaining historical records. The buyer-selection interaction below is the working assumption; live publication remains a separate opt-in after Preview.
 
-Build a public-facing website and data-backed business portal for BUY IN BALES by Advark, selling bales of okrika to retailers and thrifters.
+## Product and workflow
 
-- Visitors can understand the option to buy a bale for their own business or purchase one for a retailer to sell on their behalf.
-- The retailer pathway explains both deal structures: (1) return the bale buyer’s capital plus a fixed profit percentage agreed before the bale is assigned; (2) share profit 40% to the bale buyer and 60% to the retailer. The fixed rate is captured per bale arrangement instead of inventing a company-wide rate.
-- Retailers and wholesalers can register with business details and role using email/password accounts, without requiring a Manus account. Retailers get a progress view and can report bale sales and proceeds. Wholesalers can compare retailer performance reported by retailers who opt in to sharing.
-- Suppliers in China and London and local retailers can find one another through a registered-member partnership directory. Directory participants choose to list their business and contact details; only listed businesses appear, and their details are visible only to signed-in portal members. A separate enquiry form records interest without implying any existing supplier partnership.
-- Persist registrations, sessions, bale arrangements, reports, partnership enquiries and opt-in directory listings in the project’s managed MySQL database through the existing Express/tRPC/Drizzle stack.
-- Publish the completed site publicly as the requested working website, with automatic publishing left off.
-- Save the finished application to the user’s existing public repository `ARKOG-trade/BUY-IN-BALES-by-Advark`, preserving its initial commit and original README. Keep the Manus-managed repository canonical; do not create a duplicate repository or change GitHub visibility.
+Rebuild the existing site as a bale marketplace. The root page `/` becomes the first step in shopping, not the previous story-led landing page. At the top, show **Marketplace**, **Retailer registration**, **Supplier registration**, sign-in, and a visible cart. The first screen explains the next action and shows available, real bale listings with seller, price, stock/location, and an **Add to cart** action. Show only real published stock; do not seed false listings, seller identities, prices, or product photos. Until stock is submitted, show an honest empty state inviting suppliers to publish.
 
-## Implementation approach
+Suppliers register with **company name, physical location, CEO name, and contact info** (business email and phone/WhatsApp); suppliers can publish bales at their own prices immediately. Listing fields include bale title/type, grade/description, actual product photo, available stock, NGN price, fulfilment location, and availability. Suppliers can update price and stock; order records retain the price snapshot at checkout.
 
-Keep the existing React/Express/tRPC/Drizzle starter. Implement public routes for `/`, `/register`, `/partners`, `/login`, and `/dashboard`; the dashboard and member directory remain behind authenticated, role-aware server procedures. Extend `drizzle/schema.ts` with portal account/session, bale-deal, progress-report, and partnership-enquiry records; add matching Drizzle query helpers and tRPC/HTTP procedures with server-side validation and authorization. Implement email/password registration and sign-in with securely hashed passwords, expiring opaque sessions, HttpOnly cookies, and role checks. Use the existing OAuth modules only if needed for project infrastructure; portal access itself will not require a Manus account. Retailer views are scoped to the logged-in retailer; wholesaler summaries aggregate only retailers who opted into sharing and omit private contact details. Directory listings expose contact details only after explicit opt-in and only to signed-in members. Do not use test writes to the shared managed database.
+A buyer can shop as a guest. The cart and checkout collect buyer name, email, phone, and physical delivery/fulfilment location. Checkout persists an order request marked **payment pending**; no payment provider is configured, no money is charged, and the site must not claim an order is paid. A buyer can either buy a bale for their own business or choose the separate **Partner with a retailer** path.
 
-## Project structure
+The partner page presents approved retailer choices by **business name and physical store location only**—the working assumption is that a buyer chooses a specific eligible retailer. The buyer selects the fixed-return arrangement, set at **50% of the amount invested in that bale**, in addition to the return of the buyer's capital. Therefore total payout is **150% of the invested amount** (for example, ₦100,000 invested → ₦150,000 total payout). Apply the formula per bale, using the final NGN bale amount recorded in the order; do not add unlisted fees. **Do not offer the 60/40 split in new listings, orders, or partner screens.** Preserve existing historical records without turning them into new offers. A retailer can receive funded bales only after owner/admin approval. The retailer dashboard shows assigned bales, sales/progress updates, and the amount/status of buyer remittance. Record payout completion only after it is explicitly entered as complete.
 
-- `client/src/pages/Home.tsx`: public landing page and model explanations.
-- `client/src/pages/Register.tsx`: role selection and retailer/wholesaler registration.
-- `client/src/pages/Login.tsx`: email/password sign-in.
-- `client/src/pages/Partners.tsx`: China/London sourcing and local-retail connection directory, plus partnership enquiry form.
-- `client/src/pages/Dashboard.tsx`: role-aware retailer progress or wholesaler performance overview.
-- `client/src/components/`: responsive navigation, benefit/model cards, dashboard metrics, forms and shared UI.
-- `client/src/App.tsx`, `client/src/index.css`, `client/index.html`: route wiring, visual system and site metadata.
-- `drizzle/schema.ts` and `drizzle/`: durable application records and additive database migrations.
-- `server/db.ts`: existing database connection; `server/portalDb.ts`: portal data-access functions.
-- `server/routers.ts`, `server/portalAuth.ts`, `server/_core/context.ts`, `server/_core/portalProcedures.ts`: validated account/session logic, role-aware procedures and member directory authorization.
-- `client/public/manus-routes.json`: page-route manifest served from the origin.
+## Accounts and eligibility
+
+New public registrations are Retailer and Supplier. Email/password remains account sign-in and is separate from business profile data. A retailer's business profile contains exactly **business name, retailer name, physical store location**; do not ask for a retailer phone or other business-profile fields. A supplier's profile contains company name, physical location, CEO name, and business email plus phone/WhatsApp. Reuse the supplier business email as account email instead of asking twice.
+
+New retailer applications start pending and require owner/admin approval before receiving funded bales. Supplier accounts can publish listings immediately. Preserve existing wholesaler account records and the previous performance view for existing users; do not offer Wholesaler on new public signup. The platform's existing server-side admin procedure gates retailer approvals and order administration. Guests can place order requests without creating buyer accounts.
+
+## Implementation approach and project structure
+
+Reuse the current React, Wouter, Express, tRPC, Drizzle, and managed MySQL stack. Keep existing email/password account security and sessions. Additive schema work will support the supplier role/profile status, bale listings, order headers/items with price snapshots, retailer approval/selection, fulfilment state, and remittance records; preserve all existing accounts, progress reports, and historic deals. Development and production share the same database, so do not drop existing tables or write demo orders/users/products.
+
+- `client/src/pages/Home.tsx`: replace the story-led home page with the root marketplace catalogue, filters, availability, and product cards.
+- `client/src/components/SiteShell.tsx` and `client/src/index.css`: implement the compact trade-market bar, distinct Retailer/Supplier entry points, and responsive product-first visual system.
+- `client/src/pages/Register.tsx`: Retailer/Supplier role-specific registration with the exact profile fields above.
+- New cart, checkout, and partner-with-retailer pages: guest order request, direct-vs-partner path, eligible retailer selection, fixed-return summary, and payment-pending state.
+- Supplier/retailer/owner dashboard modules: supplier listings/stock/orders; retailer assigned-bale progress/remittance; owner/admin approval and order administration; preserved legacy wholesaler performance view.
+- `server/routers.ts`, `server/portalDb.ts`, `server/_core/portalProcedures.ts`, and `drizzle/schema.ts`: server-validated, role-scoped listing/order/approval/remittance persistence.
+- `server/storage.ts`: authorized supplier photo upload using the existing platform storage helper; validate file type and size and store stable `/manus-storage/...` asset paths with the listing record.
+- `client/public/manus-routes.json`: declare the final page route set.
+- `README.md` and `client/index.html`: update project/product descriptions to match the new fixed-return-only commerce path.
+
+TypeScript diagnostics are host-managed and already registered. Apply additive MySQL migrations only. Do not upload media or seed/alter shared live business records for tests. Checkpoint the completed code in the Manus-managed repository and sync it to the user's existing public GitHub repository `ARKOG-trade/BUY-IN-BALES-by-Advark`, preserving its current history, original README content, and `settings.html`. Automatic publishing remains off. After Preview, publish only if the owner explicitly instructs us to do so.
 
 ## Design direction
 
-Three sampled style alternatives: Contemporary African-commerce editorial (0.04); clean warehouse ledger (0.03); retro thrift-zine collage (0.02). Choose **Contemporary African-commerce editorial**.
+Three style candidates: **Warehouse price-board commerce** (0.05); **Global thrift-fashion editorial** (0.03); **Handmade bazaar collage** (0.02). Choose **Warehouse price-board commerce** to keep the next action, stock, price, seller, and fulfilment terms unmistakable.
 
-- **Design Movement:** contemporary African fashion-commerce editorial, informed by premium independent retail rather than generic SaaS dashboards.
-- **Core Principles:** tactile and human; commercial details easy to compare; confident but not flashy; mobile-first legibility.
-- **Color Philosophy:** warm paper and ink make the business feel grounded; a vivid persimmon signal color brings energy and draws attention to deal terms and actions; muted olive supports trust and progress states.
-- **Layout Paradigm:** asymmetrical editorial hero with image and headline, offset comparison cards for the two deal models, a horizontal process strip, then role-specific portal panels; avoid a uniform centered-card grid.
-- **Signature Elements:** bale-label number chips; stitched/rule-line dividers; large condensed display headlines paired with a calm text face.
-- **Interaction Philosophy:** show plain-language economics before asking for action; make role and deal choices explicit; save and confirm forms with clear status feedback; make contact sharing opt-in.
-- **Animation:** restrained, short fade/slide reveals and button feedback; respect reduced-motion preferences; no perpetual motion.
-- **Typography System:** Barlow Condensed for editorial headlines, paired with DM Sans for body copy and dense portal data.
-- **Brand Essence:** the practical bale-to-business partner connecting suppliers, bale buyers, and local thrifters; personality: resourceful, candid, assured.
-- **Brand Voice:** direct, optimistic, numbers-forward. Example: “A bale in. A business moving.” “Choose your deal. Track every sale.”
-- **Wordmark & Logo:** custom text wordmark lockup with a simple bale-tag mark, implemented as editable vector/CSS rather than relying on AI-rendered lettering.
-- **Signature Brand Color:** persimmon orange.
+- **Design Movement:** contemporary wholesale-market catalogue with the tactile character of second-hand fashion.
+- **Core Principles:** product first; prices and stock clear; seller and fulfilment terms explicit; next action obvious.
+- **Color Philosophy:** bright paper and deep charcoal keep prices legible; forest green signals active stock and verified partners; amber emphasizes cart and purchase actions. Move away from the current persimmon editorial treatment.
+- **Layout Paradigm:** a compact high-contrast navigation bar, a market/filter rail, a wide catalogue shelf, and persistent cart/order context on desktop; stack cleanly on mobile.
+- **Signature Elements:** bale-tag product labels; stock/price chips; a concise order timeline from “ordered” to “assigned,” “selling,” and “remitted.”
+- **Interaction Philosophy:** direct purchase and retailer-backed purchase are separate paths; display the fixed payout equation before the order request; clarify what becomes public.
+- **Animation:** brief transitions for cart updates, filters, and status changes; respect reduced-motion preferences; no auto-advancing banners or looping motion.
+- **Typography System:** Space Grotesk for catalogue/display headings with DM Sans for body text, labels, and forms.
+- **Brand Essence:** a transparent bale marketplace connecting suppliers, local retailers, and buyers; **direct, practical, trustworthy**.
+- **Brand Voice:** concise and action-oriented. Examples: “Browse bales. Build your stock.” “Choose your bale. See the payout.”
+- **Wordmark & Logo:** retain BUY IN BALES by Advark while adapting its bale-tag lockup for the trade-market design; preserve project logo metadata requirements.
+- **Signature Brand Color:** deep forest green.
 
-## Dependencies and serving
+## Remaining release decision
 
-Use installed React, Express, tRPC, Drizzle, MySQL, Wouter, Tailwind, and lucide-react unless implementation proves another dependency is required. The managed backend and database are enabled. Development uses the starter’s `pnpm dev` on configured port 3000; deploy the production container through the configured Dockerfile after checkpointing. Keep the page route manifest synchronized with client routes. Set project logo metadata before checkpointing. Use host-managed TypeScript diagnostics already registered for the project.
+After the owner reviews the redesigned Preview, explicitly ask whether to publish. Automatic publication remains disabled; no live deployment is authorized by this plan alone.
