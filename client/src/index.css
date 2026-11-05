@@ -574,3 +574,11 @@ h1, h2, h3, p { margin-top: 0; }
 .funded-order-history { display: grid; gap: 5px; margin: 10px 0; padding: 10px; border-radius: 5px; background: #f2f6f2; }
 .funded-order-history strong { color: #143d32; font-size: 11px; }
 .funded-order-history small { color: #65746c; font-size: 10px; line-height: 1.5; }
+
+.marketplace-hero-visual { position: relative; margin: 2px 0 26px; overflow: hidden; border: 1px solid #d9e1db; border-radius: 8px; background: #d6e2da; }
+.marketplace-hero-visual::after { position: absolute; inset: 42% 0 0; content: ""; background: linear-gradient(0deg, #10281fbb 0%, transparent 100%); pointer-events: none; }
+.marketplace-hero-visual img { display: block; width: 100%; height: clamp(250px, 34vw, 430px); object-fit: cover; object-position: center 54%; }
+.marketplace-hero-caption { position: absolute; z-index: 1; right: clamp(18px, 3vw, 38px); bottom: 20px; left: clamp(18px, 3vw, 38px); display: flex; align-items: end; justify-content: space-between; gap: 16px; color: #fff; text-shadow: 0 1px 12px #10281f66; }
+.marketplace-hero-caption span:first-child { font: 700 clamp(18px, 2.6vw, 30px)/1.1 "Space Grotesk", sans-serif; }
+.marketplace-hero-caption span:last-child { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-align: right; text-transform: uppercase; }
+@media (max-width: 720px) { .marketplace-hero-visual { margin-bottom: 20px; border-radius: 6px; } .marketplace-hero-visual img { height: 225px; object-position: center; } .marketplace-hero-caption { align-items: flex-start; flex-direction: column; bottom: 15px; gap: 5px; } .marketplace-hero-caption span:last-child { font-size: 9px; text-align: left; } }

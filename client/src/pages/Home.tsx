@@ -63,6 +63,18 @@ export default function Home() {
             </Link>
           </div>
         </div>
+        <figure className="marketplace-hero-visual">
+          <img
+            src="/manus-storage/async-images/VCeXky7I2EeRjwlvSmi47p/image-1.webp"
+            alt="Neatly arranged bundles of second-hand clothing bales in a wholesale warehouse"
+            loading="eager"
+            fetchPriority="high"
+          />
+          <figcaption className="marketplace-hero-caption">
+            <span>Okrika bales, ready for trade</span>
+            <span>Neatly arranged · Built for resellers</span>
+          </figcaption>
+        </figure>
         <div className="catalogue-toolbar">
           <label className="catalogue-search">
             <Search size={18} />

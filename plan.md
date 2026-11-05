@@ -4,7 +4,7 @@
 
 ## Product and workflow
 
-Rebuild the existing site as a bale marketplace. The root page `/` becomes the first step in shopping, not the previous story-led landing page. At the top, show **Marketplace**, **Retailer registration**, **Supplier registration**, sign-in, and a visible cart. The first screen explains the next action and shows available, real bale listings with seller, price, stock/location, and an **Add to cart** action. Show only real published stock; do not seed false listings, seller identities, prices, or product photos. Until stock is submitted, show an honest empty state inviting suppliers to publish.
+Rebuild the existing site as a bale marketplace. The root page `/` becomes the first step in shopping, not the previous story-led landing page. At the top, show **Marketplace**, **Retailer registration**, **Supplier registration**, sign-in, and a visible cart. The first screen explains the next action and shows available, real bale listings with seller, price, stock/location, and an **Add to cart** action. Include a prominent hero picture of a warehouse with clothing bales neatly arranged. Show only real published stock; do not seed false listings, seller identities, prices, or product photos. Until stock is submitted, show an honest empty state inviting suppliers to publish.
 
 Suppliers register with **company name, physical location, CEO name, and contact info** (business email and phone/WhatsApp); suppliers can publish bales at their own prices immediately. Listing fields include bale title/type, grade/description, actual product photo, available stock, NGN price, fulfilment location, and availability. Suppliers can update price and stock; order records retain the price snapshot at checkout.
 
@@ -22,7 +22,7 @@ New retailer applications start pending and require owner/admin approval before 
 
 Reuse the current React, Wouter, Express, tRPC, Drizzle, and managed MySQL stack. Keep existing email/password account security and sessions. Additive schema work will support the supplier role/profile status, bale listings, order headers/items with price snapshots, retailer approval/selection, fulfilment state, and remittance records; preserve all existing accounts, progress reports, and historic deals. Development and production share the same database, so do not drop existing tables or write demo orders/users/products.
 
-- `client/src/pages/Home.tsx`: replace the story-led home page with the root marketplace catalogue, filters, availability, and product cards.
+- `client/src/pages/Home.tsx`: replace the story-led home page with the root marketplace catalogue, filters, availability, product cards, and warehouse-with-neatly-arranged-clothing-bales hero image.
 - `client/src/components/SiteShell.tsx` and `client/src/index.css`: implement the compact trade-market bar, distinct Retailer/Supplier entry points, and responsive product-first visual system.
 - `client/src/pages/Register.tsx`: Retailer/Supplier role-specific registration with the exact profile fields above.
 - New cart, checkout, and partner-with-retailer pages: guest order request, direct-vs-partner path, eligible retailer selection, fixed-return summary, and payment-pending state.
@@ -32,7 +32,7 @@ Reuse the current React, Wouter, Express, tRPC, Drizzle, and managed MySQL stack
 - `client/public/manus-routes.json`: declare the final page route set.
 - `README.md` and `client/index.html`: update project/product descriptions to match the new fixed-return-only commerce path.
 
-TypeScript diagnostics are host-managed and already registered. Apply additive MySQL migrations only. Do not upload media or seed/alter shared live business records for tests. Checkpoint the completed code in the Manus-managed repository and sync it to the user's existing public GitHub repository `ARKOG-trade/BUY-IN-BALES-by-Advark`, preserving its current history, original README content, and `settings.html`. Automatic publishing remains off. After Preview, publish only if the owner explicitly instructs us to do so.
+TypeScript diagnostics are host-managed and already registered. Apply additive MySQL migrations only. Use the requested generated warehouse hero image from its exact managed-storage URL; do not seed demo supplier listings, orders, users, or product photos, and do not overwrite shared live business records. Checkpoint the completed code in the Manus-managed repository and sync it to the user's existing public GitHub repository `ARKOG-trade/BUY-IN-BALES-by-Advark`, preserving its current history, original README content, and `settings.html`. Automatic publishing remains off. After Preview, publish only if the owner explicitly instructs us to do so.
 
 ## Design direction
 
